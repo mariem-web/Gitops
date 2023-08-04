@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: back-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: back-app
+  template:
+    metadata:
+      labels:
+        app: back-app
+    spec:
+      containers:
+      - name: back-app
+        image: mariam1212121121/pfeback:latest
+        ports:
+            - containerPort: 3000
+        env:
+        - name: BASE_URL
+          valueFrom: 
+            configMapKeyRef:
+              name: mongo-configmap
+              key: BASE_URL
+        - name: DB_HOST
+          valueFrom: 
+            configMapKeyRef:
+              name: mongo-configmap
+              key: DB_HOST
