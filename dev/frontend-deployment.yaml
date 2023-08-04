@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: front-app
+  template:
+    metadata:
+      labels:
+        app: front-app
+    spec:
+      containers:
+      - name: front-app
+        image: mariam1212121121/pfefront:latest
+        stdin: true
+        tty: true
+        ports:
+            - containerPort: 80
+        env:
+        - name: REACT_APP_API_URL
+          valueFrom: 
+            configMapKeyRef:
+              name: mongo-configmap
+              key: REACT_APP_API_URL
+        - name: REACT_APP_API_URL_UPLOADS
+          valueFrom: 
+            configMapKeyRef:
+              name: mongo-configmap
+              key: REACT_APP_API_URL_UPLOADS
