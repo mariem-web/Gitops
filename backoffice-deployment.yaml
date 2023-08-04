@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backoffice-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backoffice-app
+  template:
+    metadata:
+      labels:
+        app: backoffice-app
+    spec:
+      containers:
+      - name: backoffice-app
+        image: mariam1212121121/pfebackoff:latest
+        stdin: true
+        tty: true
+        ports:
+            - containerPort: 4000
+        env:
+        - name: REACT_APP_API_URL
+          valueFrom: 
+            configMapKeyRef:
+              name: mongo-configmap
+              key: REACT_APP_API_URL
+        - name: REACT_APP_API_URL_UPLOADS
+          valueFrom: 
+            configMapKeyRef:
+              name: mongo-configmap
+              key: REACT_APP_API_URL_UPLOADS
+        - name: SKIP_PREFLIGHT_CHECK
+          valueFrom: 
+            configMapKeyRef:
+              name: mongo-configmap
+              key: SKIP_PREFLIGHT_CHECK
