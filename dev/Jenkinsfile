@@ -1,0 +1,28 @@
+pipeline {
+  agent any
+
+  environment {
+    ARGOCDSERVER = "https://argocd-server.example.com"
+    ARGOCDPROJECT = "my-project"
+    ARGOCDAPP = "my-app"
+    K8SCONTEXT = "my-k8s-context"
+    K8SNAMESPACE = "my-namespace"
+    ARGOCDSYNCOPTIONS = "--sync-policy=auto --prune"
+  }
+
+  stages {
+    stage('Deploy') {
+      steps {
+        script {
+          def argocdToken = credentials('argocd-token')
+
+          def appSpecFile = readFile("argocd/myapp.yaml")
+
+          def argocd = new Argocd(server: ARGOCDSERVER, token: argocdToken)
+          argocd.createApplication(appSpecFile, project: ARGOCDPROJECT)
+          argocd.syncApplication(ARGOCDAPP, ARGOCDSYNCOPTIONS)
+        }
+      }
+    }
+  }
+}
