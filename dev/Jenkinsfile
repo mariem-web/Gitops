@@ -1,28 +1,28 @@
-pipeline {
-  agent any
+node {
+    def app
 
-  environment {
-    ARGOCDSERVER = "https://argocd-server.example.com"
-    ARGOCDPROJECT = "my-project"
-    ARGOCDAPP = "my-app"
-    K8SCONTEXT = "my-k8s-context"
-    K8SNAMESPACE = "my-namespace"
-    ARGOCDSYNCOPTIONS = "--sync-policy=auto --prune"
-  }
+    stage('Clone repository') {
+      
 
-  stages {
-    stage('Deploy') {
-      steps {
-        script {
-          def argocdToken = credentials('argocd-token')
+        checkout scm
+    }
 
-          def appSpecFile = readFile("argocd/myapp.yaml")
-
-          def argocd = new Argocd(server: ARGOCDSERVER, token: argocdToken)
-          argocd.createApplication(appSpecFile, project: ARGOCDPROJECT)
-          argocd.syncApplication(ARGOCDAPP, ARGOCDSYNCOPTIONS)
-        }
+    stage('Update GIT') {
+            script {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    withCredentials([usernamePassword(credentialsId: '5d784aad-cea1-45bc-a126-50414e63adb9', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        //def encodedPassword = URLEncoder.encode("$GIT_PASSWORD",'UTF-8')
+                        sh "git config user.email mariem.khlifi@esprit.tn"
+                        sh "git config user.name mariem-web"
+                        //sh "git switch master"
+                        sh "cat deployment.yaml"
+                        sh "sed -i 's+mariam1212121121/back-image.*+mariam1212121121/back-image:${DOCKERTAG}+g' back-deployment.yaml"
+                        sh "cat back-deployment.yaml"
+                        sh "git add ."
+                        sh "git commit -m 'Done by Jenkins Job changemanifest: ${env.BUILD_NUMBER}'"
+                        sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/${GIT_USERNAME}/kubernetesmanifest.git HEAD:main"
       }
     }
   }
+}
 }
