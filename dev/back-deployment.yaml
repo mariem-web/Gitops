@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: back-app
-        image: mariam1212121121/pfeback:latest
+        image: mariam1212121121/pfeback:177
         ports:
             - containerPort: 3000
         env:
