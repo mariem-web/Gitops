@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: front-app
-        image: mariam1212121121/pfefront:latest
+        image: mariam1212121121/pfefront:14
         stdin: true
         tty: true
         ports:
