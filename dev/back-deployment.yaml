@@ -17,6 +17,8 @@ spec:
         image: containercluster.azurecr.io/backend:122
         ports:
             - containerPort: 3000
+        imagePullSecrets:
+        - name: acr-secret 
         env:
         - name: BASE_URL
           valueFrom: 
