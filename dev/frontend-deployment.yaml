@@ -1,32 +1,30 @@
-apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: front-app
+  namespace: default
 spec:
   replicas: 2
   selector:
-    matchLabels:
-      app: front-app
-  template:
-    metadata:
-      labels:
-        app: front-app
-    spec:
-      containers:
+@@ -16,17 +17,17 @@ spec:
       - name: front-app
-        image: mariam1212121121/pfefront:30
-        stdin: true
-        tty: true
+        image: containercluster.azurecr.io/frontend:30
         ports:
-            - containerPort: 80
+            - containerPort: 3000
+        imagePullSecrets:
+        - name: acr-secret 
+        - containerPort: 3000
         env:
-        - name: REACT_APP_API_URL
+        - name: BASE_URL
           valueFrom: 
+          valueFrom:
             configMapKeyRef:
               name: mongo-configmap
-              key: REACT_APP_API_URL
-        - name: REACT_APP_API_URL_UPLOADS
+              key: BASE_URL
+        - name: DB_HOST
           valueFrom: 
+          valueFrom:
             configMapKeyRef:
               name: mongo-configmap
-              key: REACT_APP_API_URL_UPLOADS
+              key: DB_HOST
+      imagePullSecrets:
+      - name: acr-secret
